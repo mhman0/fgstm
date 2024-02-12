@@ -1,25 +1,39 @@
-﻿namespace fgstm
+﻿using Microsoft.Data.SqlClient;
+using Security;
+using Xamarin.Forms;
+
+namespace fgstm
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        private const string ConnectionString = "Your_SQL_Connection_String_Here";
 
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private async void OnLoginClicked(object sender, EventArgs e)
         {
-            count++;
+            string username = UsernameEntry.Text;
+            string password = PasswordEntry.Text;
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
+            // Authenticate user against SQL database
+            bool isAuthenticated = AuthenticateUserFromDatabase(username, password);
+
+            if (isAuthenticated)
+            {
+                await DisplayAlert("Success", "Login successful!", "OK");
+                // Navigate to the next page or perform other actions
+            }
             else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            {
+                await DisplayAlert("Error", "Invalid username or password", "OK");
+            }
         }
-    }
 
-}
+        private bool AuthenticateUserFromDatabase(string username, string password)
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+
+
