@@ -1,40 +1,21 @@
 ﻿using Microsoft.Data.Sqlite;
+using System;
+using System.IO;
+using Xamarin.Essentials;
 
-namespace fgstm
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    private const string DatabaseFileName = "FAMGUARD.db"; // Name of your SQLite database file
+    private readonly string DatabasePath = Path.Combine(FileSystem.AppDataDirectory, DatabaseFileName); // Full path to the database file
+
+    private bool AuthenticateUserFromDatabase(string username, string password)
     {
-        private const string DatabasePath = "UserData.db"; // Path to your SQLite database file
-
-        public MainPage()
-        {
-            InitializeComponent();
-        }
-
-        private async void OnLoginClicked(object sender, EventArgs e)
-        {
-            string username = UsernameEntry.Text;
-            string password = PasswordEntry.Text;
-
-            // Authenticate user against SQLite database
-            bool isAuthenticated = AuthenticateUserFromDatabase(username, password);
-
-            if (isAuthenticated)
-            {
-                await DisplayAlert("Success", "Login successful!", "OK");
-                // Navigate to the next page or perform other actions
-            }
-            else
-            {
-                await DisplayAlert("Error", "Invalid username or password", "OK");
-            }
-        }
-
-        private bool AuthenticateUserFromDatabase(string username, string password)
+        try
         {
             // Construct connection string
             string connectionString = $"Data Source={DatabasePath}";
 
+            // Open connection and execute query
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
@@ -49,6 +30,11 @@ namespace fgstm
                 int count = Convert.ToInt32(command.ExecuteScalar());
                 return count > 0;
             }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error accessing database: {ex.Message}");
+            return false;
         }
     }
 }
