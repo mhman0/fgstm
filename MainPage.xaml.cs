@@ -2,11 +2,39 @@
 using System;
 using System.IO;
 using Xamarin.Essentials;
+using Xamarin.Forms;
+using FileSystem = Xamarin.Essentials.FileSystem;
 
 public partial class MainPage : ContentPage
 {
     private const string DatabaseFileName = "FAMGUARD.db"; // Name of your SQLite database file
     private readonly string DatabasePath = Path.Combine(FileSystem.AppDataDirectory, DatabaseFileName); // Full path to the database file
+
+    public MainPage()
+    {
+        InitializeComponent();
+    }
+
+    private void OnLoginClicked(object sender, EventArgs e)
+    {
+        string username = UsernameEntry.Text;
+        string password = PasswordEntry.Text;
+
+        // Authenticate user
+        bool isAuthenticated = AuthenticateUserFromDatabase(username, password);
+
+        if (isAuthenticated)
+        {
+            // User is authenticated, navigate to the next page or perform other actions
+            // For example:
+            // await Navigation.PushAsync(new HomePage());
+        }
+        else
+        {
+            // Authentication failed, display an error message to the user
+            DisplayAlert("Authentication Failed", "Invalid username or password", "OK");
+        }
+    }
 
     private bool AuthenticateUserFromDatabase(string username, string password)
     {
