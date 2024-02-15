@@ -10,11 +10,6 @@ public partial class MainPage : ContentPage
     private const string DatabaseFileName = "FAMGUARD.db"; // Name of your SQLite database file
     private readonly string DatabasePath = Path.Combine(FileSystem.AppDataDirectory, DatabaseFileName); // Full path to the database file
 
-    public MainPage()
-    {
-        InitializeComponent();
-    }
-
     private void OnLoginClicked(object sender, EventArgs e)
     {
         string username = UsernameEntry.Text;
