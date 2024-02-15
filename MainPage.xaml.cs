@@ -1,63 +1,33 @@
-﻿using Microsoft.Data.Sqlite;
-using System;
-using System.IO;
-using Xamarin.Essentials;
-using Xamarin.Forms;
-using FileSystem = Xamarin.Essentials.FileSystem;
-
-public partial class MainPage : ContentPage
+﻿namespace fgstm
 {
-    private const string DatabaseFileName = "FAMGUARD.db"; // Name of your SQLite database file
-    private readonly string DatabasePath = Path.Combine(FileSystem.AppDataDirectory, DatabaseFileName); // Full path to the database file
-
-    private void OnLoginClicked(object sender, EventArgs e)
+    public partial class MainPage : ContentPage
     {
-        string username = UsernameEntry.Text;
-        string password = PasswordEntry.Text;
-
-        // Authenticate user
-        bool isAuthenticated = AuthenticateUserFromDatabase(username, password);
-
-        if (isAuthenticated)
+        public MainPage()
         {
-            // User is authenticated, navigate to the next page or perform other actions
-            // For example:
-            // await Navigation.PushAsync(new HomePage());
+            InitializeComponent();
         }
-        else
-        {
-            // Authentication failed, display an error message to the user
-            DisplayAlert("Authentication Failed", "Invalid username or password", "OK");
-        }
-    }
 
-    private bool AuthenticateUserFromDatabase(string username, string password)
-    {
-        try
+        private void OnLoginClicked(object sender, EventArgs e)
         {
-            // Construct connection string
-            string connectionString = $"Data Source={DatabasePath}";
+            // Hardcoded username and password for demonstration
+            string hardcodedUsername = "demo";
+            string hardcodedPassword = "password";
 
-            // Open connection and execute query
-            using (var connection = new SqliteConnection(connectionString))
+            // Get the username and password entered by the user
+            string username = UsernameEntry.Text;
+            string password = PasswordEntry.Text;
+
+            // Check if the entered credentials match the hardcoded values
+            if (username == hardcodedUsername && password == hardcodedPassword)
             {
-                connection.Open();
-
-                // Execute SQL command to query user data
-                var command = connection.CreateCommand();
-                command.CommandText = "SELECT COUNT(*) FROM Users WHERE Username = @Username AND Password = @Password";
-                command.Parameters.AddWithValue("@Username", username);
-                command.Parameters.AddWithValue("@Password", password);
-
-                // Execute the command and check if the user exists
-                int count = Convert.ToInt32(command.ExecuteScalar());
-                return count > 0;
+                // Authentication successful
+                DisplayAlert("Success", "Login successful!", "OK");
             }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error accessing database: {ex.Message}");
-            return false;
+            else
+            {
+                // Authentication failed
+                DisplayAlert("Error", "Invalid username or password", "OK");
+            }
         }
     }
 }
